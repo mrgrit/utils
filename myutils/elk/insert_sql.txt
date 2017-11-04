@@ -1,0 +1,118 @@
+curl -XPUT "10.24.50.20:9200/ais" -d "{""mappings"":{""logfull"":{""properties"":{""not"":{""type"":""integer""}}}"
+
+curl -XPUT "10.24.50.20:9200/ais" -d "{""mappings"":{""logfull"":{""properties"":{""ans_flag"":{""type"":""integer""},""not"":{""type"":""integer""},""sport"":{""type"":""integer""},""dport"":{""type"":""integer""}}}}}"
+
+# max result window ¥√¿Ã±‚
+curl -XPUT "10.24.50.20:9200/ais/_settings" -d "{""index"" : {""max_result_window"": 5000000 } }"
+
+
+curl -XPOST "10.24.50.20:9200/ais/_search?pretty" -d"{""query"": {""match_all"":{}}}"
+
+
+{"query": {"match_all":{}}}
+
+
+curl -XPOST "10.24.50.20:9200/ais/_search?pretty" -d "{""query"": {""match_all"":{}},""size"":100}"
+
+curl -XPOST "10.24.50.20:9200/ais/_search?pretty" -d "{""query"": {""match_all"":{}},""from"":100, ""size"":1000}" 
+
+curl -XPOST "10.24.50.20:9200/ais/_search?pretty" -d "{""query"": {""match_all"":{}},""sort"":{""sip"":{""order"":""desc""}}}" 
+
+
+
+curl -XPOST "10.24.50.20:9200/ais/_search?pretty" -d "{""query"": {""match_all"":{}},""_source"":[""dip"",""dport""]}"
+
+curl -XPOST "10.24.50.20:9200/ais/_search?pretty" -d "{""query"": {""match"":{""dport"":""1433""}}}"
+
+curl -XPOST "10.24.50.20:9200/ais/_search?pretty" -d "{""query"": {""match"":{""dip"":""10.103.20.20""}}}"
+
+curl -XPOST "10.24.50.20:9200/ais/_search?pretty" -d "{""query"": {""match"":{""dip"":""10.103.20.20 10.103.20.10""}}}"
+
+curl -XPOST "10.24.50.20:9200/ais/_search?pretty" -d "{""query"": {""match_pharse"":{""dip"":""10.103.20.20 10.103.20.10""}}}"
+
+curl -XPOST "10.24.50.20:9200/ais/_search?pretty" -d "{""query"": {""bool"":{""must"":[{""match"":{""dip"":""10.103.20.10""}},{""match"":{""dip"":""10.103.20.20""}}]}}}"
+curl -XPOST "10.24.50.20:9200/ais/_search?pretty" -d "{""query"": {""bool"":{""must"":[{""match"":{""dip"":""10.103""}},{""match"":{""dip"":""20.20""}}]}}}"
+{
+  "took" : 1,
+  "timed_out" : false,
+  "_shards" : {
+    "total" : 5,
+    "successful" : 5,
+    "failed" : 0
+  },
+  "hits" : {
+    "total" : 0,
+    "max_score" : null,
+    "hits" : [ ]
+  }
+}
+
+
+curl -XPOST "10.24.50.20:9200/ais/_search?pretty" -d "{""query"": {""bool"":{""should"":[{""match"":{""dip"":""10.103.10.10""}},{""match"":{""dip"":""10.103.20.20""}}]}}}"
+curl -XPOST "10.24.50.20:9200/ais/_search?pretty" -d "{""query"": {""bool"":{""should"":[{""match"":{""dip"":""10.10""}},{""match"":{""dip"":""20.20""}}]}}}"
+{
+  "took" : 1,
+  "timed_out" : false,
+  "_shards" : {
+    "total" : 5,
+    "successful" : 5,
+    "failed" : 0
+  },
+  "hits" : {
+    "total" : 0,
+    "max_score" : null,
+    "hits" : [ ]
+  }
+}
+
+
+curl -XPOST "10.24.50.20:9200/ais/_search?pretty" -d "{""query"": {""bool"":{""must_not"":[{""match"":{""dip"":""10.103.20.10""}},{""match"":{""dip"":""10.103.20.20""}}]}}}"
+curl -XPOST "10.24.50.20:9200/ais/_search?pretty&search_type=scan&scroll=10m&size=50" -d "{""query"": {""bool"":{""must_not"":[{""match"":{""sip"":""118.219""}},{""match"":{""sip"":""10.103.""}}]}}}"
+
+curl -XPOST "10.24.50.20:9200/ais/_search?pretty&search_type=scan" -d "{""query"": {""bool"":{""must_not"":[{""match"":{""sip"":""118.219""}},{""match"":{""sip"":""10.103.""}}]}}}"
+
+
+curl -XPOST "10.24.50.20:9200/ais/_search?pretty" -d "{""query"": {""bool"":{""must_not"":[{""match"":{""dip"":""10.103.20.10""}},{""match"":{""dip"":""10.103.20.20""}}]}}}"
+
+
+curl -XPOST "10.24.50.20:9200/ais/_search?pretty" -d "{""query"": {""match"":{""logtype"":""waf""}}}"
+curl -XPOST "10.24.50.20:9200/ais/_search?pretty" -d "{""query"": {""match"":{""logtyp"":""fw""}}}"
+
+
+curl -XPOST "10.24.50.20:9200/ais/_search?pretty" -d "{""query"": {""match"":{""logtype"":""ips""}}}"
+
+
+curl -XPUT  "10.24.50.20:9200/ais/logfull" -d "{""not"":1, type:integer}"
+
+curl -XPUT  "10.24.50.20:9200/ais/logfull" -d "{""not"":1, type:integer}"
+
+
+
+curl -XDELETE "10.24.50.20:9200/ais"
+
+
+curl -s -XPOST "10.24.50.20:9200/ais/logfull" --data-binary @h:\tf10\temp.json
+
+"curl -s -XPOST \"10.24.50.20:9200/ais/logfull\" --data-binary @"+h:\tf10\temp.json
+
+
+
+curl -XPOST "10.24.50.20:9200/ais/_search?pretty" -d "{""query"": {""match"":{""dport"":""1433""}}}"
+
+
+
+curl -XPOST "10.24.50.20:9200/ais/_search?pretty" -d "{""query"": {""bool"":{""must"":[{""match"":{""ans_flag"":0}},{""match"":{""logtype"":""ips""}}]}}}"
+
+curl -XPOST "10.24.50.20:9200/ais/logfull/AV8oJn8D7oUHj6rDBAuW/_update" -d "{""doc"":{""ans_flag"":1}}"
+
+
+curl -XGET "10.24.50.20:9200/ais/logfull/AV8oJlZ87oUHj6rDAx24/_search?pretty" -d "{""query"": {"match_all":{}}}"
+
+
+
+
+
+
+fdsfa
+
+
